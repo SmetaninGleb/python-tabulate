@@ -21,7 +21,8 @@ except ImportError:
 def _is_file(f):
     return isinstance(f, io.IOBase)
 
-
+# ??question: Why does the __all__ list have the default values "tabulate", "tabulate_formats" and "simple_separated_formats"? 
+# question??
 __all__ = ["tabulate", "tabulate_formats", "simple_separated_format"]
 try:
     from .version import version as __version__  # noqa: F401
@@ -104,6 +105,8 @@ TableFormat = namedtuple(
 
 def _is_separating_line(row):
     row_type = type(row)
+    # ??question: Why is_sl looking that element with index 0 is equal to SEPARATE_LINE if row length is 1, and element with index 1 if row length is 2?
+    # question??
     is_sl = (row_type == list or row_type == str) and (
         (len(row) >= 1 and row[0] == SEPARATING_LINE)
         or (len(row) >= 2 and row[1] == SEPARATING_LINE)
@@ -151,12 +154,15 @@ def _mediawiki_row_with_attrs(separator, cell_values, colwidths, colaligns):
 
 
 def _textile_row_with_attrs(cell_values, colwidths, colaligns):
+    # ??question: Why is the cell_values element with index 0 equated to " "?
+    # question??
     cell_values[0] += " "
     alignment = {"left": "<.", "right": ">.", "center": "=.", "decimal": ">."}
     values = (alignment.get(a, "") + v for a, v in zip(colaligns, cell_values))
     return "|" + "|".join(values) + "|"
 
-
+# ??question: Why is the _html_begin_table_without_header function not using both arguments? 
+# question??
 def _html_begin_table_without_header(colwidths_ignore, colaligns_ignore):
     # this table header will be suppressed if there is a header row
     return "<table>\n<tbody>"
@@ -198,7 +204,8 @@ def _moin_row_with_attrs(celltag, cell_values, colwidths, colaligns, header=""):
     ]
     return "".join(values_with_attrs) + "||"
 
-
+# ??question: Should the _latex_line_begin_tabular function be augmented so that the colwidths argument is used?
+# quiestion??
 def _latex_line_begin_tabular(colwidths, colaligns, booktabs=False, longtable=False):
     alignment = {"left": "l", "right": "r", "center": "c", "decimal": "r"}
     tabular_columns_fmt = "".join([alignment.get(a, "l") for a in colaligns])
@@ -240,6 +247,9 @@ def _asciidoc_row(is_header, *args):
         # generate the list of entries in the table header field
 
         return "[{}]\n|====".format(",".join(header_list))
+
+    # ??question: Does this if elif else construction have anti-patterns? 
+    # question??
 
     if len(args) == 2:
         # two arguments are passed if called in the context of aboveline

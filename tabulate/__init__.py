@@ -783,6 +783,8 @@ _ansi_codes_bytes = re.compile(_ansi_escape_pat.encode("utf8"), re.VERBOSE)
 _ansi_color_reset_code = "\033[0m"
 
 _float_with_thousands_separators = re.compile(
+    # ??question: What do the strings for which this regular expression was written look like?
+    # question??
     r"^(([+-]?[0-9]{1,3})(?:,([0-9]{3}))*)?(?(1)\.[0-9]*|\.[0-9]+)?$"
 )
 
@@ -841,6 +843,8 @@ def _isnumber_with_thousands_separator(string):
 
 
 def _isconvertible(conv, string):
+    # ??question: Why can ValueError and TypeError errors appear in this try catch block?
+    # question??
     try:
         conv(string)
         return True
@@ -902,7 +906,8 @@ def _isbool(string):
         isinstance(string, (bytes, str)) and string in ("True", "False")
     )
 
-
+# ??question: Why does the has_invisible argument have a default value of True?
+# question??
 def _type(string, has_invisible=True, numparse=True):
     """The least generic type (type(None), int, float, str, unicode).
 
@@ -937,7 +942,8 @@ def _type(string, has_invisible=True, numparse=True):
     else:
         return str
 
-
+# ??question: What will the _afterpoint function return if it receives a string with multiple dot characters as input?
+# question??
 def _afterpoint(string):
     """Symbols after a decimal point, -1 if the string lacks the decimal point.
 
@@ -966,7 +972,8 @@ def _afterpoint(string):
     else:
         return -1  # not a number
 
-
+# ??question: Will the _padleft function work as a right padding function if I pass a negative value to the width argument? 
+# question??
 def _padleft(width, s):
     """Flush right.
 
@@ -999,11 +1006,13 @@ def _padboth(width, s):
     fmt = "{0:^%ds}" % width
     return fmt.format(s)
 
-
+# ??question: Can the _padnone function be removed?
+# question??
 def _padnone(ignore_width, s):
     return s
 
-
+# ??question: What types are correct to pass to the _strip_ansi function?
+# question??
 def _strip_ansi(s):
     r"""Remove ANSI escape sequences, both CSI (color codes, etc) and OSC hyperlinks.
 
@@ -1053,7 +1062,8 @@ def _multiline_width(multiline_s, line_width_fn=len):
     """Visible width of a potentially multiline content."""
     return max(map(line_width_fn, re.split("[\r\n]", multiline_s)))
 
-
+# ??question: What is the has_invisible argument in the _choose_width_fn function responsible for?
+# question??
 def _choose_width_fn(has_invisible, enable_widechars, is_multiline):
     """Return a function to calculate visible cell width."""
     if has_invisible:
@@ -1068,7 +1078,8 @@ def _choose_width_fn(has_invisible, enable_widechars, is_multiline):
         width_fn = line_width_fn
     return width_fn
 
-
+# ??question: What values can be passed to the alignment argument of the _align_column_choose_padfn function?
+# question??
 def _align_column_choose_padfn(strings, alignment, has_invisible):
     if alignment == "right":
         if not PRESERVE_WHITESPACE:
@@ -1108,12 +1119,14 @@ def _align_column_choose_width_fn(has_invisible, enable_widechars, is_multiline)
         width_fn = line_width_fn
     return width_fn
 
-
+# ??question: What function makes sense to pass in the line_width_fn argument to the _align_column_multiline_width function besides the default value?
+# question??
 def _align_column_multiline_width(multiline_s, line_width_fn=len):
     """Visible width of a potentially multiline content."""
     return list(map(line_width_fn, re.split("[\r\n]", multiline_s)))
 
-
+# ??question: Is it possible to pass a list with other collections inside to the _flat_list function?
+# question??
 def _flat_list(nested_list):
     ret = []
     for item in nested_list:
@@ -1131,6 +1144,8 @@ def _align_column(
     minwidth=0,
     has_invisible=True,
     enable_widechars=False,
+    # ??question: What is the is_multiline argument responsible for?
+    # question??
     is_multiline=False,
 ):
     """[string] -> [padded_string]"""
@@ -1140,10 +1155,14 @@ def _align_column(
     )
 
     s_widths = list(map(width_fn, strings))
+    # ??question: Can the value of the maxwidth variable become negative?
+    # question??
     maxwidth = max(max(_flat_list(s_widths)), minwidth)
     # TODO: refactor column alignment in single-line and multiline modes
     if is_multiline:
         if not enable_widechars and not has_invisible:
+            # ??question: What kind of list does the generator get?
+            # question??
             padded_strings = [
                 "\n".join([padfn(maxwidth, s) for s in ms.splitlines()])
                 for ms in strings
@@ -1166,6 +1185,8 @@ def _align_column(
             padded_strings = [padfn(maxwidth, s) for s in strings]
         else:
             # enable wide-character width corrections
+            # ??question: For what purpose is the s_lens variable created?
+            # question??
             s_lens = list(map(len, strings))
             visible_widths = [maxwidth - (w - l) for w, l in zip(s_widths, s_lens)]
             # wcswidth and _visible_width don't count invisible characters;
@@ -1191,6 +1212,8 @@ def _more_generic(type1, type2):
         1: bool,
         0: type(None),
     }
+    # ??question: Why in the call of the function types.get the second parameter is 5?
+    # question??
     moregeneric = max(types.get(type1, 5), types.get(type2, 5))
     return invtypes[moregeneric]
 
@@ -1218,6 +1241,8 @@ def _column_type(strings, has_invisible=True, numparse=True):
 
     """
     types = [_type(s, has_invisible, numparse) for s in strings]
+    # ??question: Why is bool passed as the third parameter to the reduce function?
+    # question??
     return reduce(_more_generic, types, bool)
 
 
@@ -1263,6 +1288,8 @@ def _align_header(
     "Pad string header to width chars given known visible_width of the header."
     if is_multiline:
         header_lines = re.split(_multiline_codes, header)
+        # ??question: Why does the generator use recursion?
+        # question??
         padded_lines = [
             _align_header(h, alignment, width, width_fn(h)) for h in header_lines
         ]
@@ -1279,7 +1306,8 @@ def _align_header(
     else:
         return _padleft(width, header)
 
-
+# ??question: Will the _remove_separating_lines function work correctly if I pass a byte string type parameter to it?
+# question??
 def _remove_separating_lines(rows):
     if type(rows) == list:
         separating_lines = []

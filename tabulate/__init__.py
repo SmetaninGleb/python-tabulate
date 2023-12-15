@@ -1324,6 +1324,8 @@ def _remove_separating_lines(rows):
 
 def _reinsert_separating_lines(rows, separating_lines):
     if separating_lines:
+        # ??question: What is the type of the index variable?
+        # question??
         for index in separating_lines:
             rows.insert(index, SEPARATING_LINE)
 
@@ -1340,6 +1342,8 @@ def _prepend_row_index(rows, index):
     sans_rows, separating_lines = _remove_separating_lines(rows)
     new_rows = []
     index_iter = iter(index)
+    # ??question: What should be stored in the sans_rows variable at this location?
+    # question??
     for row in sans_rows:
         index_v = next(index_iter)
         new_rows.append([index_v] + list(row))
@@ -1421,6 +1425,8 @@ def _normalize_tabular_data(tabular_data, headers, showindex="default"):
             index = list(tabular_data.index)
             rows = [list(row) for row in vals]
         else:
+            # ??question: What is the correct way to handle this exception?
+            # question??
             raise ValueError("tabular data doesn't appear to be a dict or a DataFrame")
 
         if headers == "keys":
@@ -1456,6 +1462,8 @@ def _normalize_tabular_data(tabular_data, headers, showindex="default"):
                 keys.extend(firstdict.keys())
                 uniq_keys.update(keys)
                 rows = rows[1:]
+            # ??question: What is implemented in this for loop?
+            # question??
             for row in rows:
                 for k in row.keys():
                     # Save unique items in input order
@@ -1544,7 +1552,8 @@ def _normalize_tabular_data(tabular_data, headers, showindex="default"):
 
     return rows, headers, headers_pad
 
-
+# ??question: What should the _wrap_text_to_colwidths function return?
+# question??
 def _wrap_text_to_colwidths(list_of_lists, colwidths, numparses=True):
     if len(list_of_lists):
         num_cols = len(list_of_lists[0])

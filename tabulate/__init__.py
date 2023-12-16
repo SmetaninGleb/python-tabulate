@@ -1615,7 +1615,8 @@ def _to_str(s, encoding="utf8", errors="ignore"):
         return s.decode(encoding=encoding, errors=errors)
     return str(s)
 
-
+# ??question: What will the tabulate function return if the maxcolwidths argument is None?
+# question??
 def tabulate(
     tabular_data,
     headers=(),
@@ -2132,6 +2133,7 @@ def tabulate(
     if tabular_data is None:
         tabular_data = []
 
+
     list_of_lists, headers, headers_pad = _normalize_tabular_data(
         tabular_data, headers, showindex=showindex
     )
@@ -2143,10 +2145,14 @@ def tabulate(
         else:
             num_cols = 0
         if isinstance(maxcolwidths, int):  # Expand scalar for all columns
+            # ??question: What does the variable num_cols store when passed as a parameter to the _expand_iterable function?
+            # question??
             maxcolwidths = _expand_iterable(maxcolwidths, num_cols, maxcolwidths)
         else:  # Ignore col width for any 'trailing' columns
             maxcolwidths = _expand_iterable(maxcolwidths, num_cols, None)
 
+        # ??question: Why is it needed to get numparses at this point?
+        # question??
         numparses = _expand_numparse(disable_numparse, num_cols)
         list_of_lists = _wrap_text_to_colwidths(
             list_of_lists, maxcolwidths, numparses=numparses
@@ -2155,6 +2161,8 @@ def tabulate(
     if maxheadercolwidths is not None:
         num_cols = len(list_of_lists[0])
         if isinstance(maxheadercolwidths, int):  # Expand scalar for all columns
+            # ??question: Why is maxheadercolwidths being overridden at this point?
+            # question??
             maxheadercolwidths = _expand_iterable(
                 maxheadercolwidths, num_cols, maxheadercolwidths
             )
@@ -2162,6 +2170,8 @@ def tabulate(
             maxheadercolwidths = _expand_iterable(maxheadercolwidths, num_cols, None)
 
         numparses = _expand_numparse(disable_numparse, num_cols)
+        # ??question: Why is it that when passing headers as a parameter, this variable is wrapped in a list?
+        # question??
         headers = _wrap_text_to_colwidths(
             [headers], maxheadercolwidths, numparses=numparses
         )[0]
@@ -2177,6 +2187,8 @@ def tabulate(
     # does not impact other formats.
     min_padding = MIN_PADDING
     if tablefmt == "pretty":
+        # ??question: Why does min_padding equate to 0 in this location?
+        # question??
         min_padding = 0
         disable_numparse = True
         numalign = "center" if numalign == _DEFAULT_ALIGN else numalign
@@ -2206,8 +2218,12 @@ def tabulate(
     if (
         not isinstance(tablefmt, TableFormat)
         and tablefmt in multiline_formats
+        # ??question: Why is plain_text passed to the _is_multiline function in this line?
+        # question??
         and _is_multiline(plain_text)
     ):
+        # ??question: Why is tablefmt inserted in both multiline_formats.get parameters?
+        # question??
         tablefmt = multiline_formats.get(tablefmt, tablefmt)
         is_multiline = True
     else:
@@ -2216,6 +2232,8 @@ def tabulate(
 
     # format rows and columns, convert numeric values to strings
     cols = list(izip_longest(*list_of_lists))
+    # ??question: The variable numparses has already been assigned a value in one of the if-else constructs above. Why does it change in this line?
+    # question??
     numparses = _expand_numparse(disable_numparse, len(cols))
     coltypes = [_column_type(col, numparse=np) for col, np in zip(cols, numparses)]
     if isinstance(floatfmt, str):  # old version
@@ -2238,6 +2256,8 @@ def tabulate(
         missing_vals = len(cols) * [missingval]
     else:
         missing_vals = list(missingval)
+        # ??question: Why is it important on this line that the length of missing_vals is less than the length of cols?
+        # question??
         if len(missing_vals) < len(cols):
             missing_vals.extend((len(cols) - len(missing_vals)) * [_DEFAULT_MISSINGVAL])
     cols = [

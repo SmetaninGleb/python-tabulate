@@ -2354,7 +2354,8 @@ def _expand_numparse(disable_numparse, column_count):
     else:
         return [not disable_numparse] * column_count
 
-
+# ??question: What is the num_desired argument responsible for?
+# question??
 def _expand_iterable(original, num_desired, default):
     """
     Expands the `original` argument to return a return a list of
@@ -2369,6 +2370,8 @@ def _expand_iterable(original, num_desired, default):
         return [default] * num_desired
 
 
+# ??question: If cells is equal to None, what will the function return?
+# question??
 def _pad_row(cells, padding):
     if cells:
         pad = " " * padding
@@ -2402,6 +2405,8 @@ def _append_basic_row(lines, padded_cells, colwidths, colaligns, rowfmt, rowalig
 
 def _align_cell_veritically(text_lines, num_lines, column_width, row_alignment):
     delta_lines = num_lines - len(text_lines)
+    # ??question: Why does blank equate to such a list?
+    # question??
     blank = [" " * column_width]
     if row_alignment == "bottom":
         return blank * delta_lines + text_lines
@@ -2435,6 +2440,8 @@ def _append_multiline_row(
     return lines
 
 
+# ??question: What does the _build_line function do?
+# question??
 def _build_line(colwidths, colaligns, linefmt):
     "Return a string which represents a horizontal line."
     if not linefmt:
@@ -2464,7 +2471,8 @@ class JupyterHTMLStr(str):
         """add a .str property so that the raw string is still accessible"""
         return self
 
-
+# ??question: What is the fmt argument responsible for?
+# question??
 def _format_table(fmt, headers, headersaligns, rows, colwidths, colaligns, is_multiline, rowaligns):
     """Produce a plain-text representation of the table."""
     lines = []
@@ -2545,6 +2553,8 @@ class _CustomTextWrap(textwrap.TextWrapper):
     """
 
     def __init__(self, *args, **kwargs):
+        # ??question: What is the _active_codes field responsible for?
+        # question??
         self._active_codes = []
         self.max_lines = None  # For python2 compatibility
         textwrap.TextWrapper.__init__(self, *args, **kwargs)
@@ -2565,6 +2575,8 @@ class _CustomTextWrap(textwrap.TextWrapper):
         as add any colors from previous lines order to preserve the same formatting
         as a single unwrapped string.
         """
+        # ??question: Why generator is needed in this place?
+        # question??
         code_matches = [x for x in _ansi_codes.finditer(new_line)]
         color_codes = [
             code.string[code.span()[0] : code.span()[1]] for code in code_matches
@@ -2577,6 +2589,8 @@ class _CustomTextWrap(textwrap.TextWrapper):
             if code != _ansi_color_reset_code:
                 self._active_codes.append(code)
             else:  # A single reset code resets everything
+                # ??question: Why is the list being cleared at this point?
+                # question??
                 self._active_codes = []
 
         # Always ensure each line is color terminted if any colors are
@@ -2595,6 +2609,8 @@ class _CustomTextWrap(textwrap.TextWrapper):
         """
         # Figure out when indent is larger than the specified width, and make
         # sure at least one character is stripped off on every pass
+        # ??question: Why does this line check that the width is less than 1, but after space_left equates to 1?
+        # question??
         if width < 1:
             space_left = 1
         else:
@@ -2649,6 +2665,8 @@ class _CustomTextWrap(textwrap.TextWrapper):
 
         # Arrange in reverse order so items can be efficiently popped
         # from a stack of chucks.
+        # ??question: Why is the reverse function applied to the chunks variable on this line?
+        # question??
         chunks.reverse()
 
         while chunks:
